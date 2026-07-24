@@ -1,0 +1,616 @@
+/* ===== トーク画面専用 ===== */
+
+/* --- 上部操作エリア --- */
+#head-area {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid var(--border);
+  background-color: var(--surface);
+}
+#talk-title {
+  font-weight: 700;
+  font-size: 1.05rem;
+  flex-grow: 1;
+  text-align: left;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+#member-button {
+  font-weight: 700;
+  font-size: 0.85rem;
+  color: var(--primary-dark);
+  background-color: var(--primary-soft);
+  padding: 0.4rem 0.8rem;
+  border-radius: var(--radius-full);
+  text-decoration: none;
+  margin: 0;
+  cursor: pointer;
+  transition: background-color 0.2s var(--ease);
+  flex-shrink: 0;
+}
+#member-button:hover {
+  background-color: rgba(var(--primary-rgb), 0.22);
+}
+#to-home-button {
+  font-family: "BIZ UDGothic", sans-serif;
+  font-weight: 700;
+  font-size: 0.78rem;
+  padding: 0.45rem 0.75rem;
+  background-color: var(--surface-alt);
+  color: var(--text);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background-color 0.2s var(--ease), border-color 0.2s var(--ease);
+}
+#to-home-button:hover {
+  background-color: var(--border);
+}
+
+#talk-loading {
+  padding: 1rem;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+
+/* --- チャット・タイムライン領域 --- */
+#talk-area {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  justify-content: flex-start;
+  padding: 1.25rem 1.25rem 0.5rem;
+  background-color: var(--bg);
+  gap: 4px;
+}
+
+.message {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  margin-bottom: 18px;
+}
+.message:last-child {
+  margin-bottom: 0;
+}
+
+.message-row {
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+  max-width: 85%;
+}
+.message-other .message-row {
+  align-self: flex-start;
+}
+.message-own .message-row {
+  align-self: flex-end;
+  flex-direction: row-reverse;
+}
+
+.bubble-col {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  gap: 6px;
+}
+.message-own .bubble-col {
+  align-items: flex-end;
+}
+.message-other .bubble-col {
+  align-items: flex-start;
+}
+
+.message .message-user {
+  font-weight: 700;
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.message .message-user .clickable-user {
+  cursor: pointer;
+}
+
+.message .message-text {
+  font-size: 1rem;
+  font-weight: 500;
+  white-space: pre-wrap;
+  line-height: 1.45;
+  text-align: left;
+  padding: 0.65rem 0.95rem;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  word-break: break-word;
+}
+.message-other .message-text {
+  background-color: var(--surface);
+  color: var(--text);
+  border-bottom-left-radius: var(--radius-xs);
+}
+.message-own .message-text {
+  background-color: var(--primary);
+  color: #fff;
+  border-bottom-right-radius: var(--radius-xs);
+}
+.message-own .message-text a.chat-link {
+  color: #eaf5fc;
+  text-decoration-color: rgba(255, 255, 255, 0.6);
+}
+
+.message .message-text .underline {
+  background: linear-gradient(transparent 70%, rgba(var(--primary-rgb), 0.5) 70%);
+}
+.message-own .message-text .underline {
+  background: linear-gradient(transparent 70%, rgba(255, 255, 255, 0.5) 70%);
+}
+.message .message-text .large { font-size: 1.25rem; }
+.message .message-text .small { font-size: 0.85rem; }
+.message .message-text .emoji { font-size: 1.3rem; line-height: 1.2; vertical-align: -0.2em; }
+.message .message-text .main-color { color: var(--primary); }
+.message-own .message-text .main-color { color: var(--light); }
+
+.message .message-image {
+  display: block;
+  width: auto;
+  height: auto;
+  max-width: min(260px, 100%);
+  max-height: 260px;
+  aspect-ratio: 1 / 1;
+  border-radius: var(--radius-md);
+  border: 1.5px solid var(--border);
+  box-shadow: var(--shadow-sm);
+  background-color: var(--surface-alt);
+  opacity: 0;
+  transition: opacity 0.25s var(--ease);
+}
+.message .message-image.loaded {
+  opacity: 1;
+}
+
+/* --- メッセージ送信エリア --- */
+#message-add-area {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0.9rem 1.25rem;
+  background-color: var(--surface);
+  border-top: 1px solid var(--border);
+}
+.message-add-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex-shrink: 0;
+}
+#open-image-modal-button,
+#open-poll-modal-button {
+  font-family: "BIZ UDGothic", sans-serif;
+  font-weight: 700;
+  font-size: 0.78rem;
+  padding: 0.45rem 0.7rem;
+  background-color: var(--primary-soft);
+  color: var(--primary-dark);
+  border: none;
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background-color 0.2s var(--ease), transform 0.15s var(--ease);
+}
+#open-image-modal-button:hover,
+#open-poll-modal-button:hover {
+  background-color: rgba(var(--primary-rgb), 0.22);
+}
+#open-image-modal-button:active,
+#open-poll-modal-button:active {
+  transform: scale(0.97);
+}
+#message-input {
+  font-family: "BIZ UDGothic", sans-serif;
+  font-weight: 500;
+  font-size: 0.98rem;
+  flex-grow: 1;
+  padding: 0.7rem 1.1rem;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-lg);
+  background-color: var(--surface-alt);
+  resize: none;
+  transition: border-color 0.2s var(--ease), box-shadow 0.2s var(--ease), background-color 0.2s var(--ease);
+}
+#message-input:focus {
+  border-color: var(--primary);
+  background-color: var(--surface);
+  box-shadow: 0 0 0 4px rgba(var(--primary-rgb), 0.15);
+  outline: none;
+}
+#message-add-button {
+  font-family: "BIZ UDGothic", sans-serif;
+  font-weight: 700;
+  font-size: 0;
+  padding: 0;
+  width: 2.8rem;
+  height: 2.8rem;
+  flex-shrink: 0;
+  background-color: var(--primary);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius-full);
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background-color 0.2s var(--ease), transform 0.2s var(--ease), box-shadow 0.2s var(--ease);
+}
+#message-add-button::before {
+  content: "";
+  width: 1.15rem;
+  height: 1.15rem;
+  background-color: currentColor;
+  -webkit-mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path d='M2 21l21-9L2 3v7l15 2-15 2v7z'/></svg>");
+  mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path d='M2 21l21-9L2 3v7l15 2-15 2v7z'/></svg>");
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
+  -webkit-mask-size: contain;
+  mask-size: contain;
+}
+#message-add-button:hover:not(:disabled) {
+  background-color: var(--primary-dark);
+  box-shadow: var(--shadow-md);
+}
+#message-add-button:active:not(:disabled) {
+  transform: scale(0.94);
+}
+#message-add-button:disabled {
+  background-color: #dbe0e6;
+  color: #9aa4ae;
+  box-shadow: none;
+  cursor: default;
+}
+
+/* --- メンバー・既読モーダルの中身 --- */
+#member-area,
+#read-area {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  width: 100%;
+  gap: 4px;
+}
+
+.member-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding: 0.6rem 0.5rem;
+  border-radius: var(--radius-sm);
+  gap: 10px;
+  transition: background-color 0.15s var(--ease);
+}
+.member-item:hover {
+  background-color: var(--surface-alt);
+}
+.member-item .member-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+.member-name {
+  font-weight: bold;
+  font-size: 1rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.member-last-checked {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  flex-shrink: 0;
+}
+
+#read-area p {
+  padding: 0.6rem 0.5rem;
+  border-radius: var(--radius-sm);
+  width: 100%;
+  transition: background-color 0.15s var(--ease);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: bold;
+  font-size: 1rem;
+}
+#read-area p:hover {
+  background-color: var(--surface-alt);
+}
+
+/* --- 編集モーダル --- */
+#new-userId-input,
+#new-message-input {
+  font-family: "BIZ UDGothic", sans-serif;
+  font-weight: 700;
+  font-size: 0.95rem;
+  width: 100%;
+  padding: 0.6rem 0.8rem;
+  margin: 0 0 10px 0;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-md);
+  background-color: var(--surface-alt);
+  transition: border-color 0.2s var(--ease), box-shadow 0.2s var(--ease), background-color 0.2s var(--ease);
+}
+#new-userId-input:focus,
+#new-message-input:focus {
+  border-color: var(--primary);
+  background-color: var(--surface);
+  box-shadow: 0 0 0 4px rgba(var(--primary-rgb), 0.15);
+  outline: none;
+}
+
+/* --- 画像送信モーダル --- */
+.image-preview-container {
+  max-width: 100%;
+  max-height: 260px;
+  overflow: hidden;
+  border-radius: var(--radius-md);
+  border: 1.5px solid var(--border);
+  margin-top: 1rem;
+}
+.image-preview-container.hidden {
+  display: none;
+}
+.image-preview-container img {
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+  display: block;
+}
+#image-message-input {
+  font-family: "BIZ UDGothic", sans-serif;
+  font-weight: 500;
+  font-size: 0.95rem;
+  width: 100%;
+  padding: 0.7rem 0.9rem;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-md);
+  background-color: var(--surface-alt);
+  margin: 1rem 0 0;
+  resize: none;
+  transition: border-color 0.2s var(--ease), box-shadow 0.2s var(--ease), background-color 0.2s var(--ease);
+}
+#image-message-input:hover {
+  border-color: #c7ccd2;
+}
+#image-message-input:focus {
+  border-color: var(--primary);
+  background-color: var(--surface);
+  box-shadow: 0 0 0 4px rgba(var(--primary-rgb), 0.15);
+  outline: none;
+}
+
+/* --- アンケート作成モーダル --- */
+#poll-question-input {
+  font-family: "BIZ UDGothic", sans-serif;
+  font-weight: 500;
+  font-size: 0.95rem;
+  width: 100%;
+  padding: 0.7rem 0.9rem;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-md);
+  background-color: var(--surface-alt);
+  resize: none;
+  transition: border-color 0.2s var(--ease), box-shadow 0.2s var(--ease), background-color 0.2s var(--ease);
+}
+#poll-question-input:hover {
+  border-color: #c7ccd2;
+}
+#poll-question-input:focus {
+  border-color: var(--primary);
+  background-color: var(--surface);
+  box-shadow: 0 0 0 4px rgba(var(--primary-rgb), 0.15);
+  outline: none;
+}
+#poll-choices-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 0.5rem;
+  max-height: 260px;
+  overflow-y: auto;
+  padding-right: 2px;
+}
+.poll-choice-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.poll-choice-input {
+  flex: 1;
+  min-width: 0;
+  font-family: "BIZ UDGothic", sans-serif;
+  font-weight: 500;
+  font-size: 0.92rem;
+  padding: 0.55rem 0.8rem;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-md);
+  background-color: var(--surface-alt);
+  transition: border-color 0.2s var(--ease), box-shadow 0.2s var(--ease), background-color 0.2s var(--ease);
+}
+.poll-choice-input:hover {
+  border-color: #c7ccd2;
+}
+.poll-choice-input:focus {
+  border-color: var(--primary);
+  background-color: var(--surface);
+  box-shadow: 0 0 0 4px rgba(var(--primary-rgb), 0.15);
+  outline: none;
+}
+.poll-choice-remove {
+  flex-shrink: 0;
+  width: 2rem;
+  height: 2rem;
+  border-radius: var(--radius-full);
+  border: none;
+  background-color: var(--surface-alt);
+  color: var(--text-muted);
+  font-size: 1.1rem;
+  font-weight: 700;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s var(--ease), color 0.2s var(--ease);
+}
+.poll-choice-remove:hover {
+  background-color: #fdecec;
+  color: #d64545;
+}
+.poll-choice-remove.hidden {
+  display: none;
+}
+
+/* --- チャット内のアンケート表示 --- */
+.poll-widget {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+  max-width: min(300px, 100%);
+  background-color: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 0.75rem;
+  box-shadow: var(--shadow-sm);
+  box-sizing: border-box;
+}
+.poll-choices-scroll {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  max-height: 220px;
+  overflow-y: auto;
+  padding-right: 2px;
+}
+.poll-choice-option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0.55rem 0.7rem;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  background-color: var(--surface-alt);
+  transition: border-color 0.15s var(--ease), background-color 0.15s var(--ease);
+}
+.poll-choice-option:hover {
+  border-color: rgba(var(--primary-rgb), 0.4);
+}
+.poll-choice-option:has(input:checked) {
+  border-color: var(--primary);
+  background-color: var(--primary-soft);
+}
+.poll-choice-option input[type="radio"] {
+  accent-color: var(--primary);
+  width: 1rem;
+  height: 1rem;
+  flex-shrink: 0;
+  margin: 0;
+}
+.poll-choice-label {
+  flex: 1;
+  min-width: 0;
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: var(--text);
+  text-align: left;
+  word-break: break-word;
+}
+.poll-choice-count {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  white-space: nowrap;
+  cursor: pointer;
+  text-decoration: underline;
+  text-decoration-style: dotted;
+  text-underline-offset: 2px;
+  flex-shrink: 0;
+  transition: opacity 0.15s var(--ease);
+}
+.poll-choice-count:hover {
+  opacity: 0.7;
+}
+.poll-answer-button {
+  font-family: "BIZ UDGothic", sans-serif;
+  font-weight: 700;
+  font-size: 0.9rem;
+  padding: 0.6rem;
+  border: none;
+  border-radius: var(--radius-md);
+  background-color: var(--primary);
+  color: #fff;
+  cursor: pointer;
+  transition: background-color 0.3s var(--ease), box-shadow 0.3s var(--ease);
+  box-shadow: var(--shadow-sm);
+}
+.poll-answer-button:hover:not(:disabled) {
+  background-color: var(--primary-dark);
+  box-shadow: var(--shadow-md);
+}
+.poll-answer-button:disabled {
+  background-color: #dbe0e6;
+  color: #9aa4ae;
+  box-shadow: none;
+  cursor: default;
+}
+
+#poll-voters-area {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 4px;
+}
+#poll-voters-area p {
+  padding: 0.6rem 0.5rem;
+  border-radius: var(--radius-sm);
+  width: 100%;
+  transition: background-color 0.15s var(--ease);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: bold;
+  font-size: 1rem;
+}
+#poll-voters-area p:hover {
+  background-color: var(--surface-alt);
+}
+
+@media (max-width: 600px) {
+  #page-talk #selection-container {
+    min-height: 100vh;
+  }
+  #head-area {
+    position: sticky;
+    top: var(--header-height, 56px);
+    z-index: 40;
+    box-shadow: var(--shadow-sm);
+  }
+  #talk-area {
+    max-height: calc(100vh - 200px);
+  }
+  .message-row {
+    max-width: 92%;
+  }
+}

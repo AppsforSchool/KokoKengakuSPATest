@@ -1,0 +1,72 @@
+/* ===== トーク一覧ページ専用 ===== */
+#page-list #selection-container {
+  padding-bottom: 1.5rem;
+}
+
+#talk-button-loading {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  padding: 1rem 0;
+}
+#talk-button-loading.hidden {
+  display: none;
+}
+
+#page-list .selection {
+  padding: 0 1.5rem;
+}
+
+/* --- トークルーム一覧（1件ずつのカード行） --- */
+.talk-button {
+  display: flex;
+  border-radius: var(--radius-md);
+  background-color: var(--surface-alt);
+  border: 1.5px solid var(--border);
+  padding: 0.9rem 1.1rem;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  width: 100%;
+  max-width: 560px;
+  margin: 0 auto;
+  transition: background-color 0.15s var(--ease), border-color 0.15s var(--ease), box-shadow 0.15s var(--ease), transform 0.15s var(--ease);
+}
+.talk-button:hover {
+  background-color: var(--primary-soft);
+  border-color: rgba(var(--primary-rgb), 0.35);
+  box-shadow: var(--shadow-sm);
+  transform: translateY(-1px);
+}
+.talk-button:active {
+  transform: translateY(0);
+}
+.talk-button .title {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--text);
+  text-align: left;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.talk-button .new-message {
+  color: var(--primary-dark);
+  font-weight: 700;
+  font-size: 0.85rem;
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+.talk-button .new-message.no-message {
+  font-weight: 700;
+  background: linear-gradient(
+    90deg,
+    #ff5a5a, #ffbc41, #f5f551, #5eff5e, #84a1ff, #ff45ff, #ff5a5a
+  );
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+  animation: wave 2s linear infinite;
+}

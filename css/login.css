@@ -1,0 +1,188 @@
+/* ===== ログインページ専用 ===== */
+#page-login {
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+}
+
+#login-container {
+  width: 100%;
+  max-width: 400px;
+  margin: 0 auto;
+  padding: 2rem 1.75rem;
+  background-color: var(--surface);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  text-align: center;
+  flex: none;
+}
+
+#login-input {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+#login-title {
+  font-size: 1.3rem;
+  font-weight: 700;
+  padding-bottom: 0;
+  margin-bottom: 0.4rem;
+  color: var(--text);
+}
+
+.login-subtitle {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  padding-bottom: 1.25rem;
+  margin-bottom: 1.5rem;
+  border-bottom: 1px solid var(--border);
+  width: 100%;
+}
+
+#to-pc {
+  display: block;
+}
+#to-sp {
+  display: none;
+}
+
+#id,
+#password {
+  font-family: "BIZ UDGothic", sans-serif;
+  font-weight: 500;
+  font-size: 1.0rem;
+
+  width: 100%;
+  max-width: 300px;
+  padding: 0.75rem 1rem;
+  margin: 0.4rem 0;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-md);
+  background-color: var(--surface-alt);
+  transition: border-color 0.2s var(--ease), box-shadow 0.2s var(--ease), background-color 0.2s var(--ease);
+}
+
+#id:hover,
+#password:hover {
+  border-color: #c7ccd2;
+}
+
+#id:focus,
+#password:focus {
+  border-color: var(--primary);
+  background-color: var(--surface);
+  box-shadow: 0 0 0 4px rgba(var(--primary-rgb), 0.15);
+  outline: none;
+}
+
+#id::placeholder,
+#password::placeholder {
+  color: #adb5bd;
+  opacity: 1;
+  font-weight: 500;
+}
+
+#qr-login-button {
+  display: inline-block;
+  margin-top: 0.9rem;
+  color: var(--primary-dark);
+  font-weight: 700;
+  font-size: 0.85rem;
+  text-decoration: underline;
+  text-decoration-style: dotted;
+  text-underline-offset: 2px;
+  cursor: pointer;
+  transition: opacity 0.15s var(--ease);
+}
+#qr-login-button:hover {
+  opacity: 0.7;
+}
+
+#login-button {
+  font-family: "BIZ UDGothic", sans-serif;
+  font-weight: 700;
+  font-size: 1.05rem;
+
+  width: 100%;
+  max-width: 300px;
+  padding: 0.85rem 1.25rem;
+  margin: 1.4rem 0 0.5rem 0;
+  text-align: center;
+  cursor: pointer;
+  display: block;
+  box-sizing: border-box;
+
+  background-color: var(--primary);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius-full);
+  box-shadow: var(--shadow-sm);
+
+  transition: background-color 0.2s var(--ease), box-shadow 0.2s var(--ease), transform 0.15s var(--ease);
+}
+#login-button:hover:not(:disabled) {
+  background-color: var(--primary-dark);
+  box-shadow: var(--shadow-md);
+}
+#login-button:active:not(:disabled) {
+  transform: scale(0.98);
+}
+#login-button:disabled {
+  background-color: #dbe0e6;
+  color: #9aa4ae;
+  box-shadow: none;
+}
+
+#error-message {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #d64545;
+  margin-top: 0.6rem;
+}
+
+/* QRログインモーダル */
+#login-qr-reader {
+  width: 100%;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+#qr-login-modal #qr-login-failure {
+  margin-top: 1rem;
+}
+#qr-login-modal #qr-login-failure p {
+  font-weight: 700;
+  font-size: 1.05rem;
+  margin-bottom: 0.75rem;
+  color: var(--text);
+}
+#qr-login-modal #qr-login-retry {
+  font-family: "BIZ UDGothic", sans-serif;
+  font-weight: 700;
+  font-size: 0.9rem;
+  background-color: var(--primary);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius-full);
+  padding: 0.55rem 1.2rem;
+  cursor: pointer;
+  transition: background-color 0.2s var(--ease), box-shadow 0.2s var(--ease);
+  box-shadow: var(--shadow-sm);
+}
+#qr-login-modal #qr-login-retry:hover {
+  background-color: var(--primary-dark);
+  box-shadow: var(--shadow-md);
+}
+
+@media (max-width: 600px) {
+  #to-pc {
+    display: none;
+  }
+  #to-sp {
+    display: block;
+  }
+  #login-container {
+    padding: 1.75rem 1.25rem;
+    border-radius: var(--radius-md);
+  }
+}

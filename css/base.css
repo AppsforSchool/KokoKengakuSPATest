@@ -1,0 +1,739 @@
+:root {
+  --primary: #007AB7;
+  --primary-rgb: 0, 122, 183;
+
+  --light: #fcf2e8;
+
+  --primary-dark: #005f8f;
+  --primary-soft: #eaf5fc;
+  --bg: #eef1f5;
+  --surface: #ffffff;
+  --surface-alt: #f6f8fa;
+  --text: #24303d;
+  --text-muted: #7c8794;
+  --border: #e6e9ee;
+
+  --radius-xs: 6px;
+  --radius-sm: 10px;
+  --radius-md: 16px;
+  --radius-lg: 22px;
+  --radius-full: 999px;
+
+  --shadow-sm: 0 1px 2px rgba(20, 30, 40, 0.06);
+  --shadow-md: 0 6px 20px rgba(20, 30, 40, 0.08);
+  --shadow-lg: 0 16px 40px rgba(20, 30, 40, 0.14);
+
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --header-height: 56px;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+html {
+  font-size: 16px;
+}
+body {
+  font-family: "BIZ UDGothic", sans-serif;
+  background-color: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+a {
+  color: var(--primary);
+}
+main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+.hidden {
+  display: none !important;
+}
+.visually-hidden-input {
+  display: none;
+}
+.split-line {
+  display: flex;
+  width: 100%;
+  border-bottom: 1.5px solid var(--border);
+  margin: 1.25rem auto;
+}
+
+/* ページ切り替え（ルーター用） */
+.page {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+/* --- 起動時オーバーレイ --- */
+#loading-overlay,
+#no-active-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(15, 20, 26, 0.85);
+  backdrop-filter: blur(6px);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  gap: 0.5rem;
+  padding: 1rem;
+}
+#loading-overlay h1 {
+  font-size: 2.6rem;
+  color: white;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+#loading-overlay p,
+#no-active-overlay p {
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.75);
+}
+#loading-overlay.hidden,
+#no-active-overlay.hidden {
+  display: none;
+}
+
+/* --- 汎用ボタン（ドロワー・各種モーダルで共通使用） --- */
+.normal-button,
+#message-delete-button,
+#new-message-change-button {
+  font-family: "BIZ UDGothic", sans-serif;
+  font-weight: 700;
+  font-size: 0.95rem;
+  padding: 0.7rem;
+  width: 100%;
+  margin-top: 0.5rem;
+  text-align: center;
+  cursor: pointer;
+  display: block;
+  box-sizing: border-box;
+  background-color: var(--primary);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.2s var(--ease), box-shadow 0.2s var(--ease), background-color 0.2s var(--ease);
+}
+.normal-button:hover:not(:disabled),
+#message-delete-button:hover:not(:disabled),
+#new-message-change-button:hover:not(:disabled) {
+  background-color: var(--primary-dark);
+  box-shadow: var(--shadow-md);
+}
+.normal-button:active:not(:disabled),
+#message-delete-button:active:not(:disabled),
+#new-message-change-button:active:not(:disabled) {
+  transform: scale(0.98);
+}
+.normal-button:disabled,
+#message-delete-button:disabled,
+#new-message-change-button:disabled {
+  background-color: #dbe0e6;
+  color: #9aa4ae;
+  border: none;
+  box-shadow: none;
+}
+.normal-button.logout-button,
+#message-delete-button {
+  background-color: var(--surface-alt);
+  color: #d64545;
+  box-shadow: none;
+  border: 1.5px solid var(--border);
+}
+.normal-button.logout-button:hover:not(:disabled),
+#message-delete-button:hover:not(:disabled) {
+  background-color: #fdecec;
+  border-color: #f3c8c8;
+}
+
+.secondary-button {
+  font-family: "BIZ UDGothic", sans-serif;
+  font-weight: 700;
+  font-size: 0.9rem;
+  padding: 0.6rem;
+  width: 100%;
+  margin-top: 0.6rem;
+  text-align: center;
+  cursor: pointer;
+  display: block;
+  box-sizing: border-box;
+  background-color: var(--surface-alt);
+  color: var(--primary-dark);
+  border: 1.5px dashed rgba(var(--primary-rgb), 0.4);
+  border-radius: var(--radius-md);
+  transition: background-color 0.2s var(--ease), border-color 0.2s var(--ease);
+}
+.secondary-button:hover:not(:disabled) {
+  background-color: var(--primary-soft);
+  border-color: var(--primary);
+}
+.secondary-button:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+/* --- アカウント設定ドロワー --- */
+.drawer-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(15, 20, 26, 0.45);
+  backdrop-filter: blur(2px);
+  z-index: 999;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s var(--ease), visibility 0.3s var(--ease);
+}
+.drawer-overlay.is-open {
+  opacity: 1;
+  visibility: visible;
+}
+
+.drawer {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 320px;
+  max-width: 85%;
+  height: 100%;
+  background-color: var(--surface);
+  box-shadow: var(--shadow-lg);
+  z-index: 1000;
+  transform: translateX(100%);
+  transition: transform 0.35s var(--ease);
+  padding: 1.5rem;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+}
+.drawer.is-open {
+  transform: translateX(0);
+}
+
+.drawer-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--border);
+}
+.drawer-header p {
+  font-weight: 700;
+  font-size: 1.2rem;
+  margin: 0;
+  color: var(--text);
+}
+.drawer-close-button {
+  background-color: var(--surface-alt);
+  border: none;
+  font-size: 1.3rem;
+  font-weight: bold;
+  cursor: pointer;
+  color: var(--text-muted);
+  width: 2.4rem;
+  height: 2.4rem;
+  border-radius: var(--radius-full);
+  transition: background-color 0.2s var(--ease), color 0.2s var(--ease);
+  text-align: center;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.drawer-close-button:hover {
+  background-color: var(--border);
+  color: var(--text);
+}
+
+.drawer-content {
+  flex-grow: 1;
+  overflow-y: auto;
+  padding-left: 2px;
+  padding-right: 6px;
+}
+
+.drawer-section {
+  margin-bottom: 1.75rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid var(--border);
+}
+.drawer-section:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+.drawer-section p.title {
+  font-weight: 700;
+  font-size: 0.8rem;
+  letter-spacing: 0.04em;
+  color: var(--primary);
+  text-transform: uppercase;
+  margin-top: 0;
+  margin-bottom: 0.6rem;
+}
+.drawer-section p {
+  font-size: 0.92rem;
+  margin-bottom: 0.6rem;
+  color: var(--text);
+}
+
+/* --- モーダル共通 --- */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(15, 20, 26, 0.55);
+  backdrop-filter: blur(3px);
+  z-index: 10000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 1rem;
+}
+.modal-overlay.hidden {
+  display: none;
+}
+
+.modal-content {
+  background: var(--surface);
+  padding: 1.5rem;
+  border-radius: var(--radius-lg);
+  width: 100%;
+  max-width: 460px;
+  max-height: 85vh;
+  overflow-y: auto;
+  text-align: center;
+  box-shadow: var(--shadow-lg);
+  animation: pop-in 0.2s var(--ease);
+}
+@keyframes pop-in {
+  from { opacity: 0; transform: translateY(8px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.25rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--border);
+}
+.modal-content .title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text);
+}
+.modal-content .close-button {
+  background-color: var(--surface-alt);
+  border: none;
+  font-size: 1.3rem;
+  font-weight: bold;
+  cursor: pointer;
+  color: var(--text-muted);
+  width: 2.4rem;
+  height: 2.4rem;
+  border-radius: var(--radius-full);
+  transition: background-color 0.2s var(--ease), color 0.2s var(--ease);
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.modal-content .close-button:hover,
+.modal-content .close-button:focus {
+  color: var(--text);
+  background-color: var(--border);
+  text-decoration: none;
+  cursor: pointer;
+}
+.modal-content .close-button.hidden {
+  display: none;
+}
+.modal-content img {
+  max-width: 100%;
+  max-height: 80vh;
+  height: auto;
+  border-radius: var(--radius-md);
+}
+
+/* --- ヘッダー領域（全ページ共通） --- */
+#app-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.9rem 1.2rem;
+  background-color: var(--surface);
+  box-shadow: var(--shadow-sm);
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  gap: 10px;
+}
+#app-header #title-area {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+#app-header #title-area #header-title {
+  font-weight: 700;
+  font-size: 1.05rem;
+  letter-spacing: 0.01em;
+}
+#app-header #title-area #header-title .rainbow {
+  background: linear-gradient(
+    90deg,
+    #ff5a5a, #ffbc41, #f5f551, #5eff5e, #84a1ff, #ff45ff, #ff5a5a
+  );
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+  animation: wave 2s linear infinite;
+}
+@keyframes wave {
+  0% { background-position: 0% center; }
+  100% { background-position: 200% center; }
+}
+
+#user-data {
+  display: flex;
+  align-items: center;
+}
+#setting-button,
+#share-modal-btn {
+  font-family: "BIZ UDGothic", sans-serif;
+  font-weight: 700;
+  font-size: 0.82rem;
+  padding: 0.5rem 0.9rem;
+  margin: 0 0 0 0.6rem;
+  width: auto;
+  text-align: center;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  box-sizing: border-box;
+  background-color: var(--primary-soft);
+  color: var(--primary-dark);
+  border: none;
+  border-radius: var(--radius-full);
+  transition: background-color 0.2s var(--ease), transform 0.15s var(--ease);
+}
+#setting-button:hover,
+#share-modal-btn:hover {
+  background-color: rgba(var(--primary-rgb), 0.22);
+}
+#setting-button:active,
+#share-modal-btn:active {
+  transform: scale(0.97);
+}
+#share-modal-btn:first-child {
+  margin-left: 0;
+}
+
+/* --- アバター（頭文字 / 画像共通） --- */
+.avatar-circle {
+  width: 2.2rem;
+  height: 2.2rem;
+  min-width: 2.2rem;
+  border-radius: var(--radius-full);
+  background: linear-gradient(155deg, var(--primary), var(--primary-dark));
+  color: #fff;
+  font-weight: 700;
+  font-size: 0.95rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  user-select: none;
+}
+.avatar-circle.small {
+  width: 1.8rem;
+  height: 1.8rem;
+  min-width: 1.8rem;
+  font-size: 0.8rem;
+}
+.avatar-circle.large {
+  width: 4.4rem;
+  height: 4.4rem;
+  min-width: 4.4rem;
+  font-size: 1.7rem;
+}
+img.avatar-circle {
+  object-fit: cover;
+  display: block;
+}
+.clickable-user {
+  transition: opacity 0.15s var(--ease);
+}
+.clickable-user:hover {
+  opacity: 0.7;
+}
+.avatar-circle.clickable-user {
+  text-decoration: none;
+  transition: transform 0.15s var(--ease);
+}
+.avatar-circle.clickable-user:hover {
+  opacity: 1;
+  transform: scale(1.06);
+}
+
+/* 管理者名の虹色表示（各所で共通使用） */
+.admin {
+  background: linear-gradient(
+    90deg,
+    #ff5a5a, #ffbc41, #f5f551, #5eff5e, #84a1ff, #ff45ff, #ff5a5a
+  );
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+  animation: wave 2s linear infinite;
+}
+
+/* --- メインコンテナ（一覧・トーク画面で共通使用） --- */
+#selection-container {
+  max-width: 760px;
+  width: 100%;
+  margin: 1.5rem auto;
+  padding: 0;
+  background-color: var(--surface);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  text-align: center;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+#selection-title {
+  font-size: 1.1rem;
+  color: var(--text-muted);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 1rem 1.5rem 0.75rem;
+}
+.selection {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* --- プロフィールモーダル（アイコン変更対応・全ページ共通） --- */
+#profile-area {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  gap: 0.9rem;
+}
+.profile-avatar-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+.profile-avatar-wrap #profile-avatar-holder {
+  position: relative;
+}
+.profile-avatar-wrap.editable #profile-avatar-holder {
+  cursor: pointer;
+  transition: opacity 0.15s var(--ease);
+}
+.profile-avatar-wrap.editable #profile-avatar-holder:hover {
+  opacity: 0.82;
+}
+.profile-avatar-wrap.editable #profile-avatar-holder::after {
+  content: "変更";
+  position: absolute;
+  bottom: -2px;
+  right: -2px;
+  background: var(--primary);
+  color: #fff;
+  font-size: 0.62rem;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: var(--radius-full);
+  box-shadow: var(--shadow-sm);
+  pointer-events: none;
+}
+#profile-avatar-remove-button {
+  background: none;
+  border: none;
+  color: #d64545;
+  font-size: 0.8rem;
+  font-weight: 700;
+  cursor: pointer;
+  text-decoration: underline;
+  text-decoration-style: dotted;
+  text-underline-offset: 2px;
+  padding: 0;
+}
+#profile-avatar-remove-button.hidden {
+  display: none;
+}
+#profile-name {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--text);
+  word-break: break-all;
+  text-align: center;
+}
+#profile-name-input {
+  font-family: "BIZ UDGothic", sans-serif;
+  font-size: 1.05rem;
+  font-weight: 700;
+  width: 100%;
+  padding: 0.6rem 0.8rem;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-md);
+  background-color: var(--surface-alt);
+  text-align: center;
+  transition: border-color 0.2s var(--ease), box-shadow 0.2s var(--ease), background-color 0.2s var(--ease);
+}
+#profile-name-input:hover {
+  border-color: #c7ccd2;
+}
+#profile-name-input:focus {
+  border-color: var(--primary);
+  background-color: var(--surface);
+  box-shadow: 0 0 0 4px rgba(var(--primary-rgb), 0.15);
+  outline: none;
+}
+
+.profile-label {
+  align-self: flex-start;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--primary);
+  margin-bottom: -0.3rem;
+}
+
+#profile-text,
+#profile-text-edit {
+  font-family: "BIZ UDGothic", sans-serif;
+  font-size: 0.95rem;
+  font-weight: 500;
+  width: 100%;
+  min-height: 110px;
+  padding: 0.85rem 1rem;
+  border-radius: var(--radius-md);
+  word-break: break-word;
+  box-sizing: border-box;
+  line-height: 1.55;
+  text-align: left;
+}
+#profile-text {
+  background-color: var(--surface-alt);
+  border: 1.5px solid var(--border);
+  white-space: pre-wrap;
+  color: var(--text);
+}
+#profile-text-edit {
+  background-color: var(--surface);
+  border: 1.5px solid var(--border);
+  transition: border-color 0.2s var(--ease), box-shadow 0.2s var(--ease);
+}
+#profile-text-edit:hover {
+  border-color: #c7ccd2;
+}
+#profile-text-edit:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 4px rgba(var(--primary-rgb), 0.15);
+  outline: none;
+}
+#profile-text-edit.hidden {
+  display: none;
+}
+
+#profile-edit-button {
+  font-family: "BIZ UDGothic", sans-serif;
+  font-weight: 700;
+  font-size: 0.95rem;
+  padding: 0.7rem;
+  width: 100%;
+  text-align: center;
+  cursor: pointer;
+  display: block;
+  box-sizing: border-box;
+  background-color: var(--primary);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.15s var(--ease), box-shadow 0.15s var(--ease), background-color 0.15s var(--ease);
+}
+#profile-edit-button:hover:not(:disabled) {
+  background-color: var(--primary-dark);
+  box-shadow: var(--shadow-md);
+}
+#profile-edit-button:active:not(:disabled) {
+  transform: scale(0.98);
+}
+#profile-edit-button:disabled {
+  background-color: #dbe0e6;
+  color: #9aa4ae;
+  box-shadow: none;
+}
+#profile-edit-button.hidden {
+  display: none;
+}
+
+footer {
+  background-color: #333;
+  color: white;
+  padding: 0.5rem 0;
+  text-align: center;
+  width: 100%;
+}
+footer p {
+  font-size: 0.7rem;
+}
+
+@media (max-width: 600px) {
+  #app-header {
+    padding: 0.75rem 1rem;
+  }
+  #user-data {
+    flex-direction: column;
+    gap: 0.3rem;
+    align-items: flex-end;
+  }
+  #setting-button,
+  #share-modal-btn {
+    margin: 0;
+    font-size: 0.75rem;
+    padding: 0.4rem 0.7rem;
+  }
+  #selection-container {
+    margin: 0;
+    border-radius: 0;
+    min-height: 100%;
+    overflow: visible;
+  }
+}
