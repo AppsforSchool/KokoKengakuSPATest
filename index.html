@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#007AB7">
+  <title>高校見学</title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=BIZ+UDGothic:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Signika+Negative:wght@300..700&display=swap" rel="stylesheet">
+
+  <!-- CSS: 骨組み(共通) + 各ページ -->
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/login.css">
+  <link rel="stylesheet" href="css/list.css">
+  <link rel="stylesheet" href="css/talk.css">
+
+  <link rel="icon" type="image/png" sizes="32x32" href="icon-512.png">
+  <link rel="apple-touch-icon" href="icon-512.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="icon-512.png">
+
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+  <script src="https://unpkg.com/html5-qrcode"></script>
+</head>
+
+<body>
+
+  <!-- ===== 起動時・共通オーバーレイ ===== -->
+  <div id="loading-overlay">
+    <h1>loading...</h1>
+    <p>システムの読み込みに時間がかかる場合があります｡</p>
+  </div>
+  <div id="no-active-overlay" class="hidden">
+    <p>アカウントが停止されています</p>
+  </div>
+
+  <!-- ===== 共通モーダル ===== -->
+  <div id="share-modal" class="modal-overlay hidden">
+    <div class="modal-content">
+      <div class="modal-header">
+        <p class="title">シェア</p>
+        <span id="share-modal-close" class="close-button">&times;</span>
+      </div>
+      <img src="qrcode.png" alt="QR Code">
+    </div>
+  </div>
+
+  <div id="qr-login-modal" class="modal-overlay hidden">
+    <div class="modal-content">
+      <div class="modal-header">
+        <p class="title">QRコードで入力</p>
+        <span id="qr-login-modal-close" class="close-button">&times;</span>
+      </div>
+      <div id="login-qr-reader" style="width: 100%; max-width: 500px; margin: auto;"></div>
+      <div id="qr-login-failure" class="hidden">
+        <p>非対応のQRコードです｡</p>
+        <button id="qr-login-retry">もう一度</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- プロフィールモーダル（アイコン変更対応版・全ページ共通で使用） -->
+  <div id="profile-modal" class="modal-overlay hidden">
+    <div class="modal-content">
+      <div class="modal-header">
+        <p class="title">プロフィール</p>
+        <span id="profile-modal-close" class="close-button">&times;</span>
+      </div>
+      <div id="profile-area">
+        <div class="profile-avatar-wrap">
+          <div id="profile-avatar-holder"></div>
+          <input type="file" id="profile-avatar-input" accept="image/*" class="visually-hidden-input">
+          <button id="profile-avatar-remove-button" class="hidden">画像を削除</button>
+        </div>
+
+        <p id="profile-name">取得中...</p>
+        <input id="profile-name-input" class="hidden" type="text" placeholder="ユーザーネーム">
+
+        <p class="profile-label">ステータスメッセージ</p>
+        <div id="profile-text">取得中...</div>
+        <textarea id="profile-text-edit" class="hidden" placeholder="自己紹介を入力してください"></textarea>
+        <button id="profile-edit-button" class="hidden">プロフィールを編集</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- トーク画面用モーダル（トークページ表示時のみ使用） -->
+  <div id="member-modal" class="modal-overlay hidden">
+    <div class="modal-content">
+      <div class="modal-header">
+        <p class="title">メンバー</p>
+        <span id="member-modal-close" class="close-button">&times;</span>
+      </div>
+      <div id="member-area"></div>
+    </div>
+  </div>
+
+  <div id="read-modal" class="modal-overlay hidden">
+    <div class="modal-content">
+      <div class="modal-header">
+        <p class="title">既読</p>
+        <span id="read-modal-close" class="close-button">&times;</span>
+      </div>
+      <div id="read-area"></div>
+    </div>
+  </div>
+
+  <div id="edit-modal" class="modal-overlay hidden">
+    <div class="modal-content">
+      <div class="modal-header">
+        <p class="title">編集</p>
+        <span id="edit-modal-close" class="close-button">&times;</span>
+      </div>
+      <input id="new-userId-input" placeholder="user id"></input>
+      <textarea id="new-message-input" rows="5"></textarea>
+      <button id="new-message-change-button">保存</button>
+      <span class="split-line"></span>
+      <button id="message-delete-button">削除</button>
+    </div>
+  </div>
+
+  <div id="image-upload-modal" class="modal-overlay hidden">
+    <div class="modal-content">
+      <div class="modal-header">
+        <p class="title">画像を送信</p>
+        <span id="image-modal-close" class="close-button">&times;</span>
+      </div>
+
+      <input type="file" id="modal-image-input" accept="image/*" class="visually-hidden-input" />
+      <button id="select-image-button" class="normal-button">画像を選択する</button>
+
+      <div id="image-preview-container" class="image-preview-container hidden">
+        <img id="image-preview" src="" alt="プレビュー">
+      </div>
+      <textarea id="image-message-input" rows="3" placeholder="メッセージを添える（任意）"></textarea>
+      <button id="submit-image-button" class="normal-button" disabled>画像を送信</button>
+    </div>
+  </div>
+
+  <div id="poll-create-modal" class="modal-overlay hidden">
+    <div class="modal-content">
+      <div class="modal-header">
+        <p class="title">アンケートを作成</p>
+        <span id="poll-create-modal-close" class="close-button">&times;</span>
+      </div>
+
+      <textarea id="poll-question-input" rows="3" placeholder="質問・説明文を入力"></textarea>
+
+      <p class="profile-label" style="margin-top: 1rem;">選択肢（最大10個）</p>
+      <div id="poll-choices-list"></div>
+      <button id="poll-add-choice-button" class="secondary-button" type="button">＋ 選択肢を追加</button>
+
+      <button id="poll-submit-button" class="normal-button" disabled>アンケートを送信</button>
+    </div>
+  </div>
+
+  <div id="poll-voters-modal" class="modal-overlay hidden">
+    <div class="modal-content">
+      <div class="modal-header">
+        <p class="title" id="poll-voters-title">回答した人</p>
+        <span id="poll-voters-modal-close" class="close-button">&times;</span>
+      </div>
+      <div id="poll-voters-area"></div>
+    </div>
+  </div>
+
+  <!-- ===== アカウント設定ドロワー（プロフィール編集含む・全ページ共通） ===== -->
+  <div id="drawerOverlay" class="drawer-overlay"></div>
+  <div id="accountSettingsDrawer" class="drawer">
+    <div class="drawer-header">
+      <p>アカウント設定</p>
+      <span id="drawerCloseButton" class="drawer-close-button">&times;</span>
+    </div>
+    <div class="drawer-content">
+      <div class="drawer-section">
+        <p class="title">現在のユーザー</p>
+        <p>ID: <strong id="drawerUserId">取得中...</strong></p>
+        <p>ユーザーネーム: <strong id="drawerUsername">取得中...</strong></p>
+
+        <button id="drawer-edit-profile-button" class="normal-button" style="margin-bottom: 1rem;">プロフィールを編集</button>
+        <button id="logout-button" class="logout-button normal-button">ログアウト</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== ヘッダー（全ページ共通） ===== -->
+  <header id="app-header">
+    <div id="title-area">
+      <p id="header-title">螺鈿紫檀五弦琵琶と<span class="rainbow">不愉快な仲間たち</span></p>
+      <button id="share-modal-btn">シェア</button>
+    </div>
+    <div id="user-data">
+      <button id="setting-button" class="hidden">アカウント情報</button>
+    </div>
+  </header>
+
+  <!-- ===== ページ本体（ここだけがルーティングで切り替わる） ===== -->
+  <main>
+
+    <!-- ログインページ -->
+    <section id="page-login" class="page hidden">
+      <div id="login-container">
+        <p id="login-title">ログイン</p>
+        <p class="login-subtitle" id="to-pc">このサイトを利用するには、ログインが必要です。</p>
+        <p class="login-subtitle" id="to-sp">このサイトを利用するには、<br>ログインが必要です。</p>
+
+        <div id="login-input">
+          <input type="text" id="id" placeholder="ID">
+          <input type="password" id="password" placeholder="パスワード">
+          <a id="qr-login-button">QRコードで入力</a>
+
+          <button type="button" id="login-button" disabled>ログイン</button>
+          <p id="error-message"></p>
+        </div>
+      </div>
+    </section>
+
+    <!-- トーク一覧ページ（URLに#talkIdが無い時） -->
+    <section id="page-list" class="page hidden">
+      <div id="selection-container">
+        <p id="selection-title">My Talk</p>
+
+        <p id="talk-button-loading">loading...</p>
+        <div id="talk-button-area" class="selection"></div>
+      </div>
+    </section>
+
+    <!-- トーク画面ページ（URLに#talkIdがある時） -->
+    <section id="page-talk" class="page hidden">
+      <div id="selection-container">
+        <p id="selection-title">My Talk</p>
+        <div id="head-area">
+          <button id="to-home-button">←ホームへもどる</button>
+          <p id="talk-title">loading...</p>
+          <p id="member-button">メンバー</p>
+        </div>
+        <p id="talk-loading" class="hidden">loading...</p>
+        <div id="talk-area" class="selection">
+          <p>loading...</p>
+        </div>
+
+        <div id="message-add-area">
+          <div class="message-add-actions">
+            <button id="open-image-modal-button" title="画像を送信">画像</button>
+            <button id="open-poll-modal-button" title="アンケートを作成">質問</button>
+          </div>
+          <textarea id="message-input" rows="5" placeholder="メッセージを入力"></textarea>
+          <button id="message-add-button" disabled>送信</button>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer>
+    <p>QRコードは株式会社デンソーウェーブの登録商標です。</p>
+  </footer>
+
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>
