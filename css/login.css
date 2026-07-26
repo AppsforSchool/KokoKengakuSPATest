@@ -1,5 +1,7 @@
 /* ===== ログインページ専用 ===== */
 #page-login {
+  flex: 1;
+  display: flex;
   align-items: center;
   justify-content: center;
   padding: 1.5rem;

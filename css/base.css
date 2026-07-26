@@ -51,8 +51,6 @@ a {
 }
 main {
   flex: 1;
-  display: flex;
-  flex-direction: column;
 }
 .hidden {
   display: none !important;
@@ -65,13 +63,6 @@ main {
   width: 100%;
   border-bottom: 1.5px solid var(--border);
   margin: 1.25rem auto;
-}
-
-/* ページ切り替え（ルーター用） */
-.page {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
 }
 
 /* --- 起動時オーバーレイ --- */
@@ -447,9 +438,6 @@ main {
 #share-modal-btn:active {
   transform: scale(0.97);
 }
-#share-modal-btn:first-child {
-  margin-left: 0;
-}
 
 /* --- アバター（頭文字 / 画像共通） --- */
 .avatar-circle {
@@ -512,28 +500,15 @@ img.avatar-circle {
   animation: wave 2s linear infinite;
 }
 
-/* --- メインコンテナ（一覧・トーク画面で共通使用） --- */
+/* --- メインコンテナ（一覧・トーク画面で共通使用。padding/overflowは各ページのCSSで指定） --- */
 #selection-container {
   max-width: 760px;
   width: 100%;
   margin: 1.5rem auto;
-  padding: 0;
   background-color: var(--surface);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-md);
   text-align: center;
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-}
-#selection-title {
-  font-size: 1.1rem;
-  color: var(--text-muted);
-  font-weight: 700;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  padding: 1rem 1.5rem 0.75rem;
 }
 .selection {
   display: flex;
@@ -729,11 +704,5 @@ footer p {
     margin: 0;
     font-size: 0.75rem;
     padding: 0.4rem 0.7rem;
-  }
-  #selection-container {
-    margin: 0;
-    border-radius: 0;
-    min-height: 100%;
-    overflow: visible;
   }
 }

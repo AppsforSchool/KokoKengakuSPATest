@@ -1,4 +1,11 @@
-/* ===== トーク画面専用 ===== */
+/* ===== トーク画面専用（元 talk.html / talkStyle.css 相当） ===== */
+#page-talk #selection-container {
+  padding: 0;
+  overflow: hidden;
+}
+#page-talk #selection-title {
+  padding: 1rem 1.5rem 0.75rem;
+}
 
 /* --- 上部操作エリア --- */
 #head-area {
@@ -61,8 +68,7 @@
 #talk-area {
   display: flex;
   flex-direction: column;
-  flex: 1;
-  min-height: 0;
+  height: 60vh;
   overflow-y: auto;
   justify-content: flex-start;
   padding: 1.25rem 1.25rem 0.5rem;
@@ -599,7 +605,13 @@
 
 @media (max-width: 600px) {
   #page-talk #selection-container {
+    margin: 0;
+    border-radius: 0;
     min-height: 100vh;
+    overflow: visible;
+  }
+  #page-talk #selection-title {
+    display: none;
   }
   #head-area {
     position: sticky;
@@ -608,7 +620,7 @@
     box-shadow: var(--shadow-sm);
   }
   #talk-area {
-    max-height: calc(100vh - 200px);
+    height: calc(100vh - 200px);
   }
   .message-row {
     max-width: 92%;
